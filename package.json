@@ -1,0 +1,32 @@
+{
+  "name": "event-booking",
+  "version": "1.0.0",
+  "description": "graphql event booking",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aldiwildan77/event-booking.git"
+  },
+  "author": "Muhammad Wildan Aldiansyah",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Aldiwildan77/event-booking/issues"
+  },
+  "homepage": "https://github.com/Aldiwildan77/event-booking#readme",
+  "dependencies": {
+    "express": "^4.17.0",
+    "express-graphql": "^0.8.0",
+    "graphql": "^14.3.0",
+    "mongoose": "^5.5.10",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.0.0",
+    "nodemon": "^1.19.0"
+  }
+}
