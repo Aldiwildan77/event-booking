@@ -1,21 +1,18 @@
 const express = require('express')
 const morgan = require('morgan')
 const graphqlHTTP = require('express-graphql')
-const {
-  buildSchema
-} = require('graphql')
-
+const { buildSchema } = require('graphql')
 
 const app = express()
-
 const events = []
+
+// Mongodb
+require('./db/connection')
 
 // Middleware
 app.use(morgan('dev'))
 app.use(express.json())
-app.use(express.urlencoded({
-  extended: true
-}))
+app.use(express.urlencoded({ extended: false }))
 
 app.use('/graphql', graphqlHTTP({
   schema: buildSchema(`
@@ -54,16 +51,23 @@ app.use('/graphql', graphqlHTTP({
     createEvent: (args) => {
       const event = {
         _id: Math.random().toString(),
-        judul: args.judul,
-        deskripsi: args.deskripsi,
-        harga: +args.harga,
-        date: new Date().toISOString()
+        judul: args.EventInput.judul,
+        deskripsi: args.EventInput.deskripsi,
+        harga: +args.EventInput.harga,
+        date: new Date().toISOString().slice(0, 10)
       }
       events.push(event)
+      return event
     }
   },
   graphiql: true
 }))
+
+app.get('/', (req, res, next) => {
+  res.status(200).json({
+    list: events
+  })
+})
 
 // Error Handling
 app.use((req, res, next) => {
