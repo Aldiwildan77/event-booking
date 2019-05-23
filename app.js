@@ -1,7 +1,10 @@
 const express = require('express')
 const morgan = require('morgan')
 const graphqlHTTP = require('express-graphql')
-const { buildSchema } = require('graphql')
+const bcrypt = require('bcrypt')
+const {
+  buildSchema
+} = require('graphql')
 
 const app = express()
 const events = []
@@ -9,10 +12,16 @@ const events = []
 // Mongodb
 require('./db/connection')
 
+// Database
+const Event = require('./models/event')
+const User = require('./models/user')
+
 // Middleware
 app.use(morgan('dev'))
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({
+  extended: false
+}))
 
 app.use('/graphql', graphqlHTTP({
   schema: buildSchema(`
@@ -24,6 +33,14 @@ app.use('/graphql', graphqlHTTP({
     date: String!
   }
 
+  type User {
+    _id: ID!
+    nama: String!
+    username: String!
+    email: String!
+    password: String
+  }
+
   input EventInput {
     judul: String!
     deskripsi: String!
@@ -31,12 +48,21 @@ app.use('/graphql', graphqlHTTP({
     date: String!
   }
 
+  input UserInput {
+    nama: String!
+    username: String!
+    email: String!
+    password: String!
+  }
+
   type RootQuery {
     events: [Event!]!
+    users: [User!]!
   } 
   
   type RootMutation {
     createEvent(EventInput: EventInput): Event
+    createUser(UserInput: UserInput): User
   }
 
   schema {
@@ -45,19 +71,78 @@ app.use('/graphql', graphqlHTTP({
     }
   `),
   rootValue: {
-    events: () => {
-      return events
+    events: async () => {
+      const result = await Event.find()
+      if (!result) {
+        throw new Error('Couldn\'t get all event')
+      }
+
+      return result.map(event => {
+        return {
+          ...event._doc,
+          _id: event._doc._id.toString()
+        }
+      })
     },
-    createEvent: (args) => {
-      const event = {
-        _id: Math.random().toString(),
+    users: async () => {
+      const result = await User.find()
+      if(!result){
+        throw new Error('Couldn\'t get all user')
+      }
+
+      return result.map(user => {
+        return {
+          ...user._doc,
+          _id: user._doc._id.toString()
+        }
+      })
+    },
+    createEvent: async (args) => {
+      const event = new Event({
         judul: args.EventInput.judul,
         deskripsi: args.EventInput.deskripsi,
         harga: +args.EventInput.harga,
-        date: new Date().toISOString().slice(0, 10)
+        date: new Date(args.EventInput.date)
+      })
+      const eventSaved = await event.save()
+
+      if (!eventSaved) {
+        throw new Error('Failed to create event')
       }
-      events.push(event)
-      return event
+      return {
+        ...eventSaved._doc,
+        _id: event._doc._id.toString()
+      }
+    },
+    createUser: async (args) => {
+      const hashedPassword = await bcrypt.hash(args.UserInput.password, 12)
+      const user = new User({
+        nama: args.UserInput.nama,
+        username: args.UserInput.username,
+        email: args.UserInput.email,
+        password: hashedPassword
+      })
+
+      const checkUser = await User.findOne({
+        $or: [{
+          username: user.username,
+          email: user.email
+        }]
+      })
+
+      if (checkUser) {
+        throw new Error('User already registered')
+      }
+
+      const userSaved = await user.save()
+      if (!userSaved) {
+        throw new Error('Failed to create user')
+      }
+
+      return {
+        ...userSaved._doc,
+        _id: userSaved._doc._id.toString()
+      }
     }
   },
   graphiql: true
