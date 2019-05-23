@@ -1,12 +1,14 @@
 const express = require('express')
 const morgan = require('morgan')
 const graphqlHTTP = require('express-graphql')
-
-const app = express()
-
 const {
   buildSchema
 } = require('graphql')
+
+
+const app = express()
+
+const events = []
 
 // Middleware
 app.use(morgan('dev'))
@@ -17,12 +19,27 @@ app.use(express.urlencoded({
 
 app.use('/graphql', graphqlHTTP({
   schema: buildSchema(`
+  type Event {
+    _id: ID!
+    judul: String!
+    deskripsi: String!
+    harga: Float!
+    date: String!
+  }
+
+  input EventInput {
+    judul: String!
+    deskripsi: String!
+    harga: Float!
+    date: String!
+  }
+
   type RootQuery {
-    events: [String!]!
+    events: [Event!]!
   } 
   
   type RootMutation {
-    createEvent(name: String): String
+    createEvent(EventInput: EventInput): Event
   }
 
   schema {
@@ -32,11 +49,17 @@ app.use('/graphql', graphqlHTTP({
   `),
   rootValue: {
     events: () => {
-      return ['Memasak', 'Berlayar']
+      return events
     },
     createEvent: (args) => {
-      const eventName = args.name
-      return eventName
+      const event = {
+        _id: Math.random().toString(),
+        judul: args.judul,
+        deskripsi: args.deskripsi,
+        harga: +args.harga,
+        date: new Date().toISOString()
+      }
+      events.push(event)
     }
   },
   graphiql: true
