@@ -6,6 +6,7 @@ const app = express()
 
 const graphQLSchema = require('./graphql/schema')
 const graphQLResolvers = require('./graphql/resolvers')
+const isAuth = require('./middleware/auth')
 
 // Mongodb
 require('./db/connection')
@@ -16,6 +17,7 @@ app.use(express.json())
 app.use(express.urlencoded({
   extended: false
 }))
+app.use(isAuth)
 
 app.use('/graphql', graphqlHTTP({
   schema: graphQLSchema,

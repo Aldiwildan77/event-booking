@@ -14,9 +14,13 @@ module.exports = {
       throw new Error(error)
     }
   },
-  createEvent: async (args) => {
+  createEvent: async (args, req) => {
+    if(!req.isAuth){
+      throw new Error('Unauthenticated')
+    }
+
     try {
-      const findUser = await User.findById('5ce745c32968780658c66301')
+      const findUser = await User.findById(req.userId)
 
       if (!findUser) {
         throw new Error('Couldn\'t find user by id')

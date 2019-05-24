@@ -1,5 +1,7 @@
 const User = require('../../models/user')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
 const { event } = require('./merge')
 
 module.exports = {
@@ -34,10 +36,42 @@ module.exports = {
         }]
       })
 
+      if(checkUser){
+        throw new Error('User already exist')
+      }
+
       const userSaved = await user.save()
       return {
         ...userSaved._doc,
         _id: userSaved._doc._id.toString()
+      }
+    } catch (error) {
+      throw new Error(error)
+    }
+  },
+  login: async ({username, password}) => {
+    try {
+      const userExists = await User.findOne({ username: username })
+      if(!userExists) {
+        throw new Error('User doesn\'t exist')
+      }
+
+      const isEqual = bcrypt.compare(password, userExists.password)
+      if(!isEqual){
+        throw new Error('Password is incorrect')
+      }
+
+      const token = jwt.sign({
+        userId: userExists.id,
+        username: userExists.username
+      }, process.env.PRIVATE_KEY_JWT, {
+        expiresIn: '2h'
+      })
+
+      return {
+        userId: userExists.id,
+        token: token,
+        tokenExp: 2
       }
     } catch (error) {
       throw new Error(error)
