@@ -11,6 +11,9 @@ const dev = {
     host: process.env.MONGO_USER || 'your_db_host',
     name: process.env.MONGO_DB || 'your_db_name',
     password: process.env.MONGO_PASSWORD || 'your_db_password',
+  },
+  auth: {
+    key: process.env.PRIVATE_KEY_JWT
   }
 }
 

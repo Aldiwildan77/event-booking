@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const config = require('../config/config').dev.auth
 
 module.exports = (req,res,next) => {
   const authHeader = req.get('Authorization')
@@ -14,7 +15,7 @@ module.exports = (req,res,next) => {
   }
 
   try {
-    const decodedToken = jwt.verify(token, process.env.PRIVATE_KEY_JWT)
+    const decodedToken = jwt.verify(token, config.key)
     if(!decodedToken){
       req.isAuth = false
       return next()
