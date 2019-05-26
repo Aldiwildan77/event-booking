@@ -1,6 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const graphqlHTTP = require('express-graphql')
+const helmet = require('helmet')
 
 const app = express()
 
@@ -12,6 +13,7 @@ const isAuth = require('./middleware/auth')
 require('./db/connection')
 
 // Middleware
+app.use(helmet())
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({
