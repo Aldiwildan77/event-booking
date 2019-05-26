@@ -1,6 +1,10 @@
 const http = require('http')
 const app = require('./app')
-const config = require('./config/config').dev.app
+let config = require('./config/config')
+
+if(process.env.NODE_ENV === 'development'){
+  config = config.dev.app
+}
 
 const server = http.createServer(app)
 
