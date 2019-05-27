@@ -2,6 +2,7 @@ const express = require('express')
 const morgan = require('morgan')
 const graphqlHTTP = require('express-graphql')
 const helmet = require('helmet')
+const cors = require('cors')
 
 const app = express()
 
@@ -13,6 +14,7 @@ const isAuth = require('./middleware/auth')
 require('./db/connection')
 
 // Middleware
+app.use(cors())
 app.use(helmet())
 app.use(morgan('dev'))
 app.use(express.json())
