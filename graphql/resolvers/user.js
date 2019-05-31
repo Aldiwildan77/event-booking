@@ -16,7 +16,7 @@ module.exports = {
         }
       })
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
   createUser: async (args) => {
@@ -46,7 +46,7 @@ module.exports = {
         _id: userSaved._doc._id.toString()
       }
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
   login: async ({username, password}) => {
@@ -74,7 +74,7 @@ module.exports = {
         tokenExp: 2
       }
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   }
 }

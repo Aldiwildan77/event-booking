@@ -11,7 +11,7 @@ module.exports = {
         return transformEvent(event)
       })
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
   createEvent: async (args, req) => {
@@ -43,7 +43,7 @@ module.exports = {
       return createdEvent
 
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
 }

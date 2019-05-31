@@ -15,7 +15,7 @@ module.exports = {
         return transformBooking(booking)
       })
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
   bookEvent: async (args, req) => {
@@ -44,7 +44,7 @@ module.exports = {
       const bookingSaved = await booking.save()
       return transformBooking(bookingSaved)
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
   cancelBooking: async (args, req) => {
@@ -60,7 +60,7 @@ module.exports = {
       return transformEvent(deletedBooking.event)
 
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   }
 }

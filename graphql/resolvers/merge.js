@@ -14,7 +14,7 @@ const event = async eventId => {
       return transformEvent(event)
     })
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 
@@ -29,7 +29,7 @@ const singleEvent = async eventId => {
     return transformEvent(findSingleEvent)
 
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 
@@ -43,7 +43,7 @@ const user = async userId => {
       createdEvents: event.bind(this, findUser._doc.createdEvents)
     }
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 
