@@ -1,4 +1,9 @@
-require('dotenv').config()
+const dotenv = require('dotenv')
+const result = dotenv.config()
+
+if (result.error) {
+  throw result.error
+}
 
 const dev = {
   app: {
