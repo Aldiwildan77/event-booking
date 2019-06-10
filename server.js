@@ -1,11 +1,11 @@
 const http = require('http')
 const app = require('./app')
-const dotenv = require('dotenv')
+let config = require('./config/config')
 
-dotenv.config()
+if(process.env.NODE_ENV === 'development'){
+  config = config.dev.app
+}
 
-const port = process.env.PORT || 5010
-const hostname = process.env.HOSTNAME
 const server = http.createServer(app)
 
-server.listen(port, hostname, () => console.log(`Server is running at http://${hostname}:${port}`))
+server.listen(config.port , config.hostname, () => console.log(`Server is running at http://${config.hostname}:${config.port}`))
