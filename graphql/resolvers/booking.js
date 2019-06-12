@@ -1,11 +1,14 @@
 const User = require('../../models/user')
 const Event = require('../../models/event')
 const Booking = require('../../models/booking')
-const { transformBooking, transformEvent } = require('./merge')
+const {
+  transformBooking,
+  transformEvent
+} = require('./merge')
 
 module.exports = {
-  bookings: async (req) => {
-    if(!req.isAuth){
+  bookings: async (args, req) => {
+    if (!req.isAuth) {
       throw new Error('Unauthenticated')
     }
 
@@ -19,13 +22,13 @@ module.exports = {
     }
   },
   bookEvent: async (args, req) => {
-    if(!req.isAuth){
+    if (!req.isAuth) {
       throw new Error('Unauthenticated')
     }
 
     try {
       const fetchedUser = await User.findById(req.userId)
-      if(!fetchedUser){
+      if (!fetchedUser) {
         throw new Error('User doesn\'t registered')
       }
 
@@ -38,7 +41,7 @@ module.exports = {
 
       const booking = new Booking({
         event: fetchedEvent,
-        user: fetchedUser 
+        user: fetchedUser
       })
 
       const bookingSaved = await booking.save()
@@ -48,7 +51,7 @@ module.exports = {
     }
   },
   cancelBooking: async (args, req) => {
-    if(!req.isAuth){
+    if (!req.isAuth) {
       throw new Error('Unauthenticated')
     }
 
