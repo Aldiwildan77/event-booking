@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
     decodedToken = jwt.verify(token, config.key)
   } catch (error) {
     req.isAuth = false
-    next()
+    return next()
   }
 
   if (!decodedToken) {
